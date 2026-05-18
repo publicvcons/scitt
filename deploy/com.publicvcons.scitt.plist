@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  launchd job: keep the PublicVCons SCITT transparency service running.
+
+  Install:
+    cp seed/scitt/deploy/com.publicvcons.scitt.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.publicvcons.scitt.plist
+
+  Binds to 127.0.0.1:8000 only. Public exposure at
+  scitt.publicvcons.org is a separate cloud/DNS step (see runbook).
+  Adjust the two paths if this repo is not at ~/publicvcons/scitt.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.publicvcons.scitt</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/openconserver/venvs/tools/bin/uvicorn</string>
+    <string>scitt_service:app</string>
+    <string>--host</string><string>127.0.0.1</string>
+    <string>--port</string><string>8000</string>
+    <string>--log-level</string><string>warning</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/openconserver/publicvcons/scitt/server</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PVCONS_SCITT_LEDGER</key>
+    <string>/Volumes/publicvcons/scitt-ledger</string>
+  </dict>
+
+  <key>KeepAlive</key>
+  <true/>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/Volumes/publicvcons/logs/scitt.stdout.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Volumes/publicvcons/logs/scitt.stderr.log</string>
+  <key>ProcessType</key>
+  <string>Background</string>
+</dict>
+</plist>
